@@ -3,6 +3,7 @@ package com.jetbrains.kmpapp.screens.list
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -65,15 +69,28 @@ private fun ObjectGrid(
     modifier: Modifier = Modifier,
 ) {
     LazyRow() {  }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(180.dp),
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp)
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(count = 2),
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp,
     ) {
-        items(objects, key = { it.objectID }) { obj ->
+        // make sure all objects have a unique key
+        require(objects.size == objects.map { it.objectID }.toSet().size)
+
+        items(
+            count = objects.size,
+            key = { index -> objects[index].objectID },
+            contentType = { index -> objects[index] },
+            span = { StaggeredGridItemSpan.SingleLane },
+        ) { index ->
+            val obj = objects[index]
             ObjectFrame(
                 obj = obj,
                 onClick = { onObjectClick(obj.objectID) },
+                modifier = Modifier
+                    .height(if (obj.objectID % 2 == 0) 350.dp else 250.dp)
+                    .background(Color.LightGray)
             )
         }
     }
