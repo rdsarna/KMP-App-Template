@@ -62,7 +62,17 @@ data class DetailScreen(val objectId: Int) : Screen {
             if (objectAvailable) {
                 ObjectDetails(obj!!, onBackClick = { navigator.pop() })
             } else {
-                EmptyScreenContent(Modifier.fillMaxSize())
+                Scaffold(
+                    topBar = {
+                        TopAppBar(backgroundColor = Color.White) {
+                            IconButton(onClick = { navigator.pop() }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.back))
+                            }
+                        }
+                    },
+                ) { paddingValues ->
+                    EmptyScreenContent(Modifier.fillMaxSize())
+                }
             }
         }
     }
